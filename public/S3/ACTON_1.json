@@ -1,0 +1,207 @@
+[
+  {
+    "document_type": "purchase_order",
+    "Company": "ACTON TECHNOLOGY PTE. LTD.",
+    "Sold To": "12104470",
+    "SoldTo Address": "11 Woodlands Close, #09-27 Woodlands 11, Singapore, 737853",
+    "Multiple Ship To": "No",
+    "Ship To": "12500283",
+    "ShipTo Address": "C/o Savino Del Bene (S) Pte Ltd, 3 Changi South Street 2, Xilin Districenter Block B,# 01-02, Singapore, SG, 486548",
+    "Multiple Currency": "No",
+    "Currency": "EUR",
+    "Customer PO": "ATSPO26-1101",
+    "items": [
+      {
+        "Customer Part No": "88000111",
+        "Requested Date": "05-01-2027",
+        "Quantity": "2500",
+        "Unit Price": "2.50000",
+        "Sales Unit Price Basis": "5",
+        "PO Shipway_Destination": "3 | SEA",
+        "CPN Flag": "Y",
+        "Unit Price Flag": "N",
+        "JDE Item No": "ZXTR9900A",
+        "JDE Unit Price": "$ 12,500",
+        "CO Remark": "Updated Data",
+        "PO Remark": "EU Compliance",
+        "SP Number": "88990011"
+      },
+      {
+        "Customer Part No": "11887766",
+        "Requested Date": "25-10-2027",
+        "Quantity": "3600",
+        "Unit Price": "7.89000",
+        "Sales Unit Price Basis": "45",
+        "PO Shipway_Destination": "88 | SEA",
+        "CPN Flag": "Y",
+        "Unit Price Flag": "N",
+        "JDE Item No": "PLMK7788R",
+        "JDE Unit Price": "$ 28,404",
+        "CO Remark": "Awaiting Approval",
+        "PO Remark": "Schedule Shipment",
+        "SP Number": "77889900"
+      },
+      {
+        "Customer Part No": "44990011",
+        "Requested Date": "12-12-2027",
+        "Quantity": "2100",
+        "Unit Price": "5.56000",
+        "Sales Unit Price Basis": "28",
+        "PO Shipway_Destination": "12 | ROAD",
+        "CPN Flag": "N",
+        "Unit Price Flag": "Y",
+        "JDE Item No": "BNMV4433K",
+        "JDE Unit Price": "$ 11,676",
+        "CO Remark": "Special Pricing",
+        "PO Remark": "Customer Requested Delay",
+        "SP Number": "88990011"
+      }
+    ],
+    "confidence_scores": {
+      "overall_confidence": 0.93,
+      "field_confidence": {
+        "Company": 0.99,
+        "Sold To": 1.0,
+        "SoldTo Address": 0.97,
+        "Multiple Ship To": 1.0,
+        "Ship To": 1.0,
+        "ShipTo Address": 0.96,
+        "Multiple Currency": 1.0,
+        "Currency": 0.96,
+        "Customer PO": 0.95,
+        "items": {
+          "Customer Part No": 0.98,
+          "Requested Date": 0.96,
+          "Quantity": 0.99,
+          "Unit Price": 0.97,
+          "Sales Unit Price Basis": 0.94
+        }
+      }
+    }
+  },
+  {
+    "document_type": "purchase_order",
+    "Company": "ACTON TECHNOLOGY PTE. LTD.",
+    "Sold To": "12104470",
+    "SoldTo Address": "11 Woodlands Close, #09-27 Woodlands 11, Singapore, 737853",
+    "Multiple Ship To": "No",
+    "Ship To": "12500283",
+    "ShipTo Address": "C/o Savino Del Bene (S) Pte Ltd, 3 Changi South Street 2, Xilin Districenter Block B,# 01-02, Singapore, SG, 486548",
+    "Multiple Currency": "No",
+    "Currency": "AUD",
+    "Customer PO": "ATSPO26-1102",
+    "items": [
+      {
+        "Customer Part No": "88214567",
+        "Requested Date": "05-03-2027",
+        "Quantity": "2500",
+        "Unit Price": "4.92500",
+        "Sales Unit Price Basis": "30",
+        "PO Shipway_Destination": "15 | SEA",
+        "CPN Flag": "Y",
+        "Unit Price Flag": "Y",
+        "JDE Item No": "ZXCV1234A",
+        "JDE Unit Price": "$ 12,312",
+        "CO Remark": "Price Confirmed",
+        "PO Remark": "Standard Delivery",
+        "SP Number": "11223344"
+      },
+      {
+        "Customer Part No": "66339871",
+        "Requested Date": "18-04-2027",
+        "Quantity": "3200",
+        "Unit Price": "7.12000",
+        "Sales Unit Price Basis": "40",
+        "PO Shipway_Destination": "21 | ROAD",
+        "CPN Flag": "N",
+        "Unit Price Flag": "Y",
+        "JDE Item No": "ASDF5566Q",
+        "JDE Unit Price": "$ 22,784",
+        "CO Remark": "Discount Applied",
+        "PO Remark": "Express Shipping",
+        "SP Number": "22334455"
+      },
+      {
+        "Customer Part No": "99018765",
+        "Requested Date": "09-06-2027",
+        "Quantity": "1800",
+        "Unit Price": "3.65000",
+        "Sales Unit Price Basis": "25",
+        "PO Shipway_Destination": "44 | AIR",
+        "CPN Flag": "Y",
+        "Unit Price Flag": "N",
+        "JDE Item No": "QWER7788T",
+        "JDE Unit Price": "$ 6,570",
+        "CO Remark": "Pending Review",
+        "PO Remark": "Hold for Confirmation",
+        "SP Number": "33445566"
+      },
+      {
+        "Customer Part No": "77124589",
+        "Requested Date": "14-07-2027",
+        "Quantity": "5000",
+        "Unit Price": "8.25000",
+        "Sales Unit Price Basis": "60",
+        "PO Shipway_Destination": "11 | SEA",
+        "CPN Flag": "N",
+        "Unit Price Flag": "N",
+        "JDE Item No": "LMNB3344P",
+        "JDE Unit Price": "$ 41,250",
+        "CO Remark": "High Volume Order",
+        "PO Remark": "Priority Handling",
+        "SP Number": "44556677"
+      },
+      {
+        "Customer Part No": "55447896",
+        "Requested Date": "30-08-2027",
+        "Quantity": "2750",
+        "Unit Price": "6.18000",
+        "Sales Unit Price Basis": "35",
+        "PO Shipway_Destination": "73 | ROAD",
+        "CPN Flag": "Y",
+        "Unit Price Flag": "Y",
+        "JDE Item No": "TYUI9900Z",
+        "JDE Unit Price": "$ 16,995",
+        "CO Remark": "Approved by Finance",
+        "PO Remark": "Normal Processing",
+        "SP Number": "55667788"
+      },
+      {
+        "Customer Part No": "33006789",
+        "Requested Date": "11-09-2027",
+        "Quantity": "4200",
+        "Unit Price": "9.45000",
+        "Sales Unit Price Basis": "75",
+        "PO Shipway_Destination": "55 | AIR",
+        "CPN Flag": "N",
+        "Unit Price Flag": "Y",
+        "JDE Item No": "GHJK1122L",
+        "JDE Unit Price": "$ 39,690",
+        "CO Remark": "Rate Adjusted",
+        "PO Remark": "Immediate Dispatch",
+        "SP Number": "66778899"
+      }
+    ],
+    "confidence_scores": {
+      "overall_confidence": 0.94,
+      "field_confidence": {
+        "Company": 0.99,
+        "Sold To": 1.0,
+        "SoldTo Address": 0.98,
+        "Multiple Ship To": 1.0,
+        "Ship To": 1.0,
+        "ShipTo Address": 0.97,
+        "Multiple Currency": 1.0,
+        "Currency": 0.97,
+        "Customer PO": 0.96,
+        "items": {
+          "Customer Part No": 0.99,
+          "Requested Date": 0.97,
+          "Quantity": 0.98,
+          "Unit Price": 0.95,
+          "Sales Unit Price Basis": 0.93
+        }
+      }
+    }
+  }
+]
