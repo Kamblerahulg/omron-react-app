@@ -26,7 +26,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="ocb" element={<OCB />} />
-          <Route path="omi" element={<OMI />} />
+          {/* <Route path="omi" element={<OMI />} /> */}
           <Route path="accountsettings/user-option" element={<UserOption />} />
           <Route path="accountsettings/user-mapping" element={<UserMapping />} />
           <Route path="accountsettings/entities" element={<Entities />} />

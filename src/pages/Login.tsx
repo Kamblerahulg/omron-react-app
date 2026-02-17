@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { useMsal } from "@azure/msal-react";
 
 import { loginRequest } from "../auth/msalConfig"; // 👈 ADD
+import { generateToken } from "../api/api.auth";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -58,6 +59,7 @@ const Login = () => {
         }
 
         // ⚠️ TEMP ONLY (remove once SSO-only)
+        generateToken()
         navigate("/landing-ocb");
     };
 
@@ -67,7 +69,6 @@ const Login = () => {
     const handleSSOLogin = async () => {
         try {
             const response = await instance.loginPopup(loginRequest);
-
             const idToken = response.idToken;
 
             // Send Azure token to backend

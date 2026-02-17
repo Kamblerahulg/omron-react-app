@@ -7,23 +7,26 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { motion, AnimatePresence } from "framer-motion";
-import { Variants } from "framer-motion";
-const PRIMARY = "#005eb8";
+import MenuIcon from "@mui/icons-material/Menu";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import { motion, AnimatePresence, Variants } from "framer-motion";
+
+const PRIMARY = "rgba(0, 94, 184)";
 
 const menuItems = [
-  { text: "OCBAP Auto SO", path: "/", icon: <DashboardOutlinedIcon /> },
+  { text: "OCBAP Auto SO", path: "/", icon: <DashboardOutlinedIcon sx={{ fontSize: 20 }} /> },
   {
     text: "Configuration",
-    icon: <SettingsOutlinedIcon />,
+    icon: <SettingsOutlinedIcon sx={{ fontSize: 20 }} />,
     children: [
       { text: "Users", path: "/accountsettings/user-option" },
       { text: "User Mapping", path: "/accountsettings/user-mapping" },
-      // { text: "Roles", path: "/accountsettings/role" },
       { text: "Groups", path: "/accountsettings/group" },
       { text: "Entities", path: "/accountsettings/entities" },
       { text: "Customer Management", path: "/accountsettings/customer" },
@@ -31,41 +34,15 @@ const menuItems = [
   },
 ];
 
-
-const submenuVariants = {
-  hidden: { height: 0, opacity: 0 },
-  visible: {
-    height: "auto",
-    opacity: 1,
-    transition: { duration: 0.35, ease: "easeInOut" },
-  },
-  exit: { height: 0, opacity: 0 },
-};
-
-const Sidebar = () => {
+const Sidebar = ({
+  collapsed,
+  setCollapsed,
+}: {
+  collapsed: boolean;
+  setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const location = useLocation();
-  const submenuVariants: Variants = {
-    hidden: {
-      height: 0,
-      opacity: 0,
-    },
-    visible: {
-      height: "auto",
-      opacity: 1,
-      transition: {
-        duration: 0.35,
-        ease: [0.4, 0, 0.2, 1], // ✅ Material-like easing
-      },
-    },
-    exit: {
-      height: 0,
-      opacity: 0,
-      transition: {
-        duration: 0.25,
-        ease: [0.4, 0, 0.2, 1],
-      },
-    },
-  };
+
   const [openConfig, setOpenConfig] = React.useState(
     location.pathname.startsWith("/accountsettings")
   );
@@ -75,106 +52,145 @@ const Sidebar = () => {
       location.pathname.startsWith(child.path)
     );
 
+  const submenuVariants: Variants = {
+    hidden: { height: 0, opacity: 0 },
+    visible: {
+      height: "auto",
+      opacity: 1,
+      transition: { duration: 0.3 },
+    },
+    exit: { height: 0, opacity: 0, transition: { duration: 0.2 } },
+  };
+
   return (
     <Box
       sx={{
-        width: 270,
+        width: collapsed ? 60 : 220,
+        transition: "width 0.3s ease",
         minHeight: "100vh",
         background: "linear-gradient(180deg, #005EB8, #004a94)",
-        px: 2.5,
+        px: collapsed ? 1 : 2,
         pt: 2,
         pb: 3,
         display: "flex",
         flexDirection: "column",
         boxShadow: "6px 0 24px rgba(0,0,0,0.18)",
+        overflowX: "hidden",
       }}
     >
-      <Box textAlign="center" mb={2}>
+      {/* Logo + Toggle */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: collapsed ? "column" : "row",
+          alignItems: "center",
+          justifyContent: collapsed ? "center" : "space-between",
+          mb: 2,
+          gap: collapsed ? 1 : 0,
+        }}
+      >
         <Box
           component="img"
-          src={"../images/PNG_Omron_Logo/white_logo_bluebg_rectangle.png"}
+          src={
+            collapsed
+              ? "../images/PNG_Omron_Logo/white_logo_bluebg_square.png"
+              : "../images/PNG_Omron_Logo/white_logo_bluebg_rectangle.png"
+          }
           alt="Omron"
-          sx={{ height: 55, objectFit: "contain" }}
+          sx={{
+            height: collapsed ? 32 : 36,
+            width: collapsed ? 32 : "auto",
+            transition: "all 0.3s ease",
+            objectFit: "contain",
+          }}
         />
+
+        <IconButton
+          onClick={() => setCollapsed(!collapsed)}
+          sx={{
+            color: "#fff",
+            background: "rgba(255,255,255,0.15)",
+            width: 28,
+            height: 28,
+            "&:hover": { background: "rgba(255,255,255,0.25)" },
+            transition: "all 0.3s ease",
+          }}
+        >
+          {collapsed ? (
+            <MenuIcon fontSize="small" />
+          ) : (
+            <MenuOpenIcon fontSize="small" />
+          )}
+        </IconButton>
       </Box>
 
-      {/* Divider below logo */}
-      <Divider
-        sx={{
-          mb: 3,
-          borderColor: "rgba(255,255,255,0.25)",
-          borderBottomWidth: "1px",
-        }}
-      />
+      <Divider sx={{ mb: 2, borderColor: "rgba(255,255,255,0.25)" }} />
 
       <List>
         {menuItems.map((item) => {
           const hasChildren = Boolean(item.children);
+          const isActive = location.pathname === item.path;
+          const parentActive = isParentActive(item);
 
-          const isActive = item.path === "/"
-            ? location.pathname === "/"
-            : location.pathname === item.path;
           return (
-            <Box key={item.text} mb={1}>
-              {/* Parent item */}
-              <ListItemButton
-                component={hasChildren ? motion.div : NavLink}
-                to={!hasChildren ? item.path : undefined}
-                onClick={hasChildren ? () => setOpenConfig(!openConfig) : undefined}
-                sx={{
-                  width: "100%",            // ✅ IMPORTANT
-                  mb: 1.2,
-                  borderRadius: "18px",
-                  px: 2.8,
-                  py: 1.9,
-                  position: "relative",
-                  background:
-                    isActive || isParentActive(item)
-                      ? "linear-gradient(90deg, #ffffff 0%, #eef5ff 100%)"
-                      : "transparent",
-                  color:
-                    isActive || isParentActive(item)
-                      ? PRIMARY
-                      : "rgba(255,255,255,0.95)",
-                  "&::before":
-                    isActive || isParentActive(item)
-                      ? {
-                        content: '""',
-                        position: "absolute",
-                        left: 0,
-                        top: "20%",
-                        height: "60%",
-                        width: 5,
-                        borderRadius: 6,
-                        background: PRIMARY,
-                      }
-                      : {},
-                }}
-              >
-
-                <ListItemIcon
-                  sx={{ color: isActive ? PRIMARY : "#fff", minWidth: 44 }}
+            <Box key={item.text} mb={0.5}>
+              <Tooltip title={collapsed ? item.text : ""} placement="right" arrow>
+                <ListItemButton
+                  component={!hasChildren ? NavLink : "div"}
+                  to={!hasChildren ? item.path : undefined}
+                  onClick={hasChildren ? () => setOpenConfig(!openConfig) : undefined}
+                  sx={{
+                    borderRadius: "12px",
+                    mb: 0.5,
+                    py: 0.8,
+                    justifyContent: collapsed ? "center" : "flex-start",
+                    px: collapsed ? 1 : 2,
+                    background:
+                      isActive || parentActive
+                        ? "linear-gradient(90deg, #ffffff 0%, #eef5ff 100%)"
+                        : "transparent",
+                    color:
+                      isActive || parentActive
+                        ? PRIMARY
+                        : "rgba(255,255,255,0.95)",
+                  }}
                 >
-                  {item.icon}
-                </ListItemIcon>
-
-                <ListItemText
-                  primary={item.text}
-                  primaryTypographyProps={{ fontSize: 16, fontWeight: 700 }}
-                />
-
-                {hasChildren && (
-                  <ExpandMoreIcon
+                  <ListItemIcon
                     sx={{
-                      transform: openConfig ? "rotate(180deg)" : "rotate(0deg)",
-                      transition: "0.3s",
+                      color:
+                        isActive || parentActive ? PRIMARY : "#fff",
+                      minWidth: collapsed ? 0 : 36,
                     }}
-                  />
-                )}
-              </ListItemButton>
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+
+                  {!collapsed && (
+                    <ListItemText
+                      primary={item.text}
+                      primaryTypographyProps={{
+                        fontSize: 12,
+                        fontWeight: 500,
+                      }}
+                    />
+                  )}
+
+                  {hasChildren && !collapsed && (
+                    <ExpandMoreIcon
+                      sx={{
+                        transform: openConfig
+                          ? "rotate(180deg)"
+                          : "rotate(0deg)",
+                        transition: "0.3s",
+                        fontSize: 16,
+                      }}
+                    />
+                  )}
+                </ListItemButton>
+              </Tooltip>
 
               {/* Submenu */}
-              {hasChildren && (
+              {hasChildren && !collapsed && (
                 <AnimatePresence>
                   {openConfig && (
                     <motion.div
@@ -183,40 +199,34 @@ const Sidebar = () => {
                       animate="visible"
                       exit="exit"
                     >
-                      <List sx={{ pl: 4, pt: 1 }}>
+                      <List sx={{ pl: 3 }}>
                         {item.children.map((child) => {
                           const childActive =
                             location.pathname === child.path;
 
                           return (
-                            <motion.div
+                            <ListItemButton
                               key={child.text}
-                              whileHover={{ x: 6 }}
+                              component={NavLink}
+                              to={child.path}
+                              sx={{
+                                borderRadius: "12px",
+                                mb: 0.25,
+                                py: 0.6,
+                                background: childActive
+                                  ? "rgba(255,255,255,0.28)"
+                                  : "transparent",
+                                color: "#fff",
+                              }}
                             >
-                              <ListItemButton
-                                component={NavLink}
-                                to={child.path}
-                                sx={{
-                                  width: "100%",            // ✅ IMPORTANT
-                                  borderRadius: "14px",
-                                  mb: 0.6,
-                                  py: 1.3,
-                                  background: childActive
-                                    ? "rgba(255,255,255,0.28)"
-                                    : "transparent",
-                                  color: "#fff",
+                              <ListItemText
+                                primary={child.text}
+                                primaryTypographyProps={{
+                                  fontSize: 11,
+                                  fontWeight: childActive ? 500 : 400,
                                 }}
-                              >
-
-                                <ListItemText
-                                  primary={child.text}
-                                  primaryTypographyProps={{
-                                    fontSize: 14.5,
-                                    fontWeight: childActive ? 700 : 600,
-                                  }}
-                                />
-                              </ListItemButton>
-                            </motion.div>
+                              />
+                            </ListItemButton>
                           );
                         })}
                       </List>
@@ -229,14 +239,20 @@ const Sidebar = () => {
         })}
       </List>
 
-      <Divider sx={{ my: 3, borderColor: "rgba(255,255,255,.3)" }} />
+      <Divider sx={{ my: 2, borderColor: "rgba(255,255,255,.3)" }} />
 
-      <Box mt="auto" textAlign="center" fontSize={12} color="rgba(255,255,255,.7)">
-        v1.0.0
-      </Box>
+      {!collapsed && (
+        <Box
+          mt="auto"
+          textAlign="center"
+          fontSize={10}
+          color="rgba(255,255,255,.7)"
+        >
+          v1.0.0
+        </Box>
+      )}
     </Box>
   );
 };
-
 
 export default Sidebar;

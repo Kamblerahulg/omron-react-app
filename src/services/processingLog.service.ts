@@ -2,6 +2,7 @@ import axios from "axios";
 import { ProcessingLog } from "../models/processingLog.model";
 import { MOCK_PROCESSING_LOGS } from "../mocks/processingLog.mock";
 import { MOCK_PROCESSING_LOG_DETAILS } from "../mocks/processingLogDetail.mock";
+import { callApi } from "../api/api.util";
 
 const BASE_URL = "/salesorders/processing-log";
 
@@ -63,3 +64,11 @@ export const processingLogService = {
 
 };
 
+
+export const getFileLogs = async () => {
+  return callApi({
+    url: "file-log",
+    method: "GET",
+    requiresAuth: true, // 🔥 This attaches Bearer + Private Key
+  });
+};

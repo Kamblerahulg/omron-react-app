@@ -353,7 +353,6 @@ pricing setup, and retry after correction.
           </Stack>
         </Stack>
       </Paper>
-
       {/* ===== PDF + JSON SECTION ===== */}
       <Box
         display="flex"

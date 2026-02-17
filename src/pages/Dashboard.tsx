@@ -24,7 +24,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useEffect } from "react";
-import { processingLogService }
+import { getFileLogs, processingLogService }
   from "../services/processingLog.service";
 
 import { ProcessingLog }
@@ -73,46 +73,93 @@ const Dashboard = () => {
   const [detailCache, setDetailCache] = useState<Record<string, any>>({});
   const [loadingDetail, setLoadingDetail] = useState<string | null>(null);
 
+  const [fileLogs, setFileLogs] = useState<any[]>([]);
+  // const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const fetchFileLogs = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await getFileLogs();
+      setFileLogs(response?.data || response); // adjust if API wraps response
+
+    } catch (err: any) {
+      setError(err?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFileLogs();
+  }, []);
+  console.log(fileLogs)
+
   const handleOpenAudit = (row: any) => {
     setSelectedAudit(row);
     setAuditOpen(true);
   };
-  const modernField = {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 2,
-    minWidth: 120,
+  // const compactFilter = {
+  //   backgroundColor: "#FFFFFF",
+  //   borderRadius: 2,
+  //   minWidth: 120,
+
+  //   "& .MuiOutlinedInput-root": {
+  //     transition: "all 0.3s ease",
+  //     backgroundColor: "#FFFFFF",
+
+  //     "& fieldset": {
+  //       borderColor: "#E5E7EB",
+  //     },
+
+  //     "&:hover fieldset": {
+  //       borderColor: "#CBD5E1",
+  //     },
+
+  //     "&.Mui-focused": {
+  //       transform: "translateY(-1px) scale(1.01)",
+  //       boxShadow: "0 6px 20px rgba(47,111,237,0.15)",
+
+  //       "& fieldset": {
+  //         borderColor: "#2F6FED",
+  //         borderWidth: 1.5,
+  //       },
+  //     },
+  //   },
+
+  //   "& .MuiInputLabel-root": {
+  //     fontSize: 13,
+  //     color: "#6B7280",
+  //   },
+
+  //   "& .MuiInputBase-input": {
+  //     fontSize: 14,
+  //     padding: "10px 12px",
+  //   },
+  // };
+
+
+  const compactFilter = {
+    width: 110,
+
+    "& .MuiInputLabel-root": {
+      fontSize: 10,
+    },
 
     "& .MuiOutlinedInput-root": {
-      transition: "all 0.3s ease",
-      backgroundColor: "#FFFFFF",
+      height: 30,
+      fontSize: 11,
+      backgroundColor: "#fff",
 
       "& fieldset": {
         borderColor: "#E5E7EB",
       },
-
-      "&:hover fieldset": {
-        borderColor: "#CBD5E1",
-      },
-
-      "&.Mui-focused": {
-        transform: "translateY(-1px) scale(1.01)",
-        boxShadow: "0 6px 20px rgba(47,111,237,0.15)",
-
-        "& fieldset": {
-          borderColor: "#2F6FED",
-          borderWidth: 1.5,
-        },
-      },
     },
 
-    "& .MuiInputLabel-root": {
-      fontSize: 13,
-      color: "#6B7280",
-    },
-
-    "& .MuiInputBase-input": {
-      fontSize: 14,
-      padding: "10px 12px",
+    "& .MuiOutlinedInput-input": {
+      padding: "4px 8px",
+      fontSize: 11,
     },
   };
 
@@ -299,8 +346,6 @@ const Dashboard = () => {
       );
 
       alert("✅ Orders successfully posted to JDE");
-
-      // Optional: refresh grid
       const data = await processingLogService.list();
       setRows(data);
     } catch (error) {
@@ -310,48 +355,38 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
+  const DATE_WIDTH = 140;
+  const NORMAL_WIDTH = 150;
+  const SMALL_WIDTH = 120;
 
 
   return (
     <Box>
-      <Typography fontSize={22} fontWeight={600} mb={1}>
+      <Typography
+        fontFamily={`"Shorai Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif`}
+        fontSize={18}
+        fontWeight={600}
+        mb={1}
+      >
         OCB - Sales Order Processing Dashboard
       </Typography>
 
       {/* ================= Filters ================= */}
       <Box
-        display="flex"
-        gap={2}
-        mb={1}
         sx={{
-          // 🔹 layout behavior (same as first box)
-          flexWrap: "nowrap",           // ❌ no wrapping
-          overflowX: "auto",            // ✅ horizontal scroll
-          whiteSpace: "nowrap",
+          display: "flex",
           alignItems: "center",
-
-          // 🔹 existing styles (unchanged)
-          p: 2,
-          borderRadius: 3,
-          background: "rgba(255,255,255,0.75)",
-          border: "1px solid rgba(226,232,240,0.8)",
-          boxShadow: "0 10px 30px rgba(15,23,42,0.08)",
-          backdropFilter: "blur(12px)",
-          position: "sticky",
-          top: 16,
-          zIndex: 10,
-
-          // 🔹 scrollbar styling (added)
-          "&::-webkit-scrollbar": {
-            height: 6,
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "#CBD5E1",
-            borderRadius: 4,
-          },
+          gap: 1,
+          mb: 1,
+          p: 1,
+          borderRadius: 2,
+          background: "#fff",
+          border: "1px solid #E5E7EB",
+          overflowX: "auto",     // scroll instead of wrap
+          whiteSpace: "nowrap",  // force single row
+          flexWrap: "nowrap",    // NEVER wrap
         }}
       >
-
         {/* Start Date */}
         <TextField
           type="date"
@@ -360,8 +395,9 @@ const Dashboard = () => {
           InputLabelProps={{ shrink: true }}
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          sx={modernField}
+          sx={{ ...compactFilter, width: DATE_WIDTH }}
         />
+
 
         {/* End Date */}
         <TextField
@@ -371,7 +407,7 @@ const Dashboard = () => {
           InputLabelProps={{ shrink: true }}
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
-          sx={modernField}
+          sx={{ ...compactFilter, width: DATE_WIDTH }}
         />
         {/* Entity */}
         <Select
@@ -379,7 +415,7 @@ const Dashboard = () => {
           value={entity}
           displayEmpty
           onChange={(e) => setEntity(e.target.value)}
-          sx={{ ...modernField, minWidth: 140 }}
+          sx={{ ...compactFilter, width: NORMAL_WIDTH }}
         >
           <MenuItem value="">
             All Entity
@@ -394,6 +430,7 @@ const Dashboard = () => {
         <Autocomplete
           size="small"
           options={customerList}
+          sx={{ width: 180 }}   // slightly bigger like OMI
           open={customerOpen}
           inputValue={customerInput}
           onInputChange={(event, newInputValue) => {
@@ -424,30 +461,10 @@ const Dashboard = () => {
               placeholder="Type Customer name..."
               size="small"
               sx={{
-                ...modernField,
+                ...compactFilter,
                 minWidth: 160,
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",       // same as Select
-                  '& fieldset': {
-                    borderColor: "#ccc",     // normal border color
-                    borderWidth: 1,
-                  },
-                  '&:hover fieldset': {
-                    borderColor: "#999",     // hover border
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: "#2F6FED",  // focus border
-                    borderWidth: 2,
-                  },
-                  height: 43,                 // same as Select
-                },
-                "& .MuiOutlinedInput-input": {
-                  padding: "8px 12px",        // adjust to match Select text vertical alignment
-                  fontSize: 14,
-                  boxSizing: "border-box",
-                  height: "24px",              // inner input height to align vertically
-                },
               }}
+
               InputLabelProps={{
                 shrink: true,
               }}
@@ -490,7 +507,7 @@ const Dashboard = () => {
           size="small"
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          sx={{ ...modernField, minWidth: 160 }}
+          sx={{ ...compactFilter, width: SMALL_WIDTH }}
         >
           {STATUS_OPTIONS.map((s) => (
             <MenuItem key={s} value={s}>
@@ -504,7 +521,7 @@ const Dashboard = () => {
           label="Customer PO #."
           value={customerPONo}
           onChange={(e) => setCustomerPONo(e.target.value)}
-          sx={{ ...modernField, minWidth: 140 }}
+          sx={{ ...compactFilter, width: SMALL_WIDTH }}
         />
         {/* Sales Order No */}
         <TextField
@@ -512,7 +529,7 @@ const Dashboard = () => {
           label="Sales Order #"
           value={salesOrderNo}
           onChange={(e) => setSalesOrderNo(e.target.value)}
-          sx={{ ...modernField, minWidth: 140 }}
+          sx={{ ...compactFilter, width: SMALL_WIDTH }}
         />
 
         {/* Customer Type */}
@@ -520,7 +537,7 @@ const Dashboard = () => {
           size="small"
           value={customerType}
           onChange={(e) => setCustomerType(e.target.value)}
-          sx={{ ...modernField, minWidth: 140 }}
+          sx={{ ...compactFilter, width: SMALL_WIDTH }}
         >
           <MenuItem value="ALL">All Customers</MenuItem>
           <MenuItem value="PRIMARY">My Primary Customers</MenuItem>
@@ -528,50 +545,83 @@ const Dashboard = () => {
         </Select>
 
       </Box>
-
-
       {/* ================= Table ================= */}
       <Paper
         sx={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
           borderRadius: 3,
           border: "1px solid #E5E7EB",
           overflow: "hidden",
-
         }}
       >
-        <TableContainer>
-          <Table>
-            <TableHead sx={{ backgroundColor: "#F9FAFB" }}>
+
+        <TableContainer
+          sx={{
+            "& .MuiTableCell-root": {
+              fontSize: 11,
+              paddingTop: 1,
+              paddingBottom: 1,
+            },
+          }}
+        >
+
+          <Table
+            stickyHeader
+            size="small"
+            sx={{
+              width: "100%",
+              tableLayout: "auto",
+              "& .MuiTableCell-root": {
+                fontSize: 11,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                paddingTop: 1,
+                paddingBottom: 1,
+              },
+            }}
+          >
+            <TableHead
+              sx={{
+                "& .MuiTableCell-root": {
+                  fontWeight: 600,
+                  fontSize: 12,
+                  whiteSpace: "nowrap",
+                  backgroundColor: "#F9FAFB",
+                },
+              }}
+            >
               <TableRow>
-                <TableCell sx={{ fontWeight: 600, fontSize: 15, width: 160 }}>
+                <TableCell sx={{ fontWeight: 600, width: 160 }}>
                   Processed Date
                 </TableCell>
-                <TableCell sx={{ fontWeight: 600, fontSize: 15, width: 220 }}>
+                <TableCell sx={{ fontWeight: 600, width: 220 }}>
                   Entity
                 </TableCell>
-                <TableCell sx={{ fontWeight: 600, fontSize: 15, width: 220 }}>
+                <TableCell sx={{ fontWeight: 600, width: 220 }}>
                   Customer Name
                 </TableCell>
-                <TableCell sx={{ fontWeight: 600, fontSize: 15, width: 200 }}>
+                <TableCell sx={{ fontWeight: 600, width: 200 }}>
                   Customer PO #
                 </TableCell>
-                <TableCell sx={{ fontWeight: 600, fontSize: 15, width: 180 }}>
+                <TableCell sx={{ fontWeight: 600, width: 180 }}>
                   Sales Order #
                 </TableCell>
                 <TableCell
                   sx={{
                     fontWeight: 600,
-                    fontSize: 15,
                     width: 120,
                     textAlign: "left",
                   }}
                 >
                   Status
                 </TableCell>
-                <TableCell sx={{ fontWeight: 600, fontSize: 15, width: 260 }}>
+                <TableCell sx={{ fontWeight: 600, width: 260 }}>
                   Review Data
                 </TableCell>
-                <TableCell sx={{ fontWeight: 600, fontSize: 15, width: 130, textAlign: "center" }}>
+                <TableCell sx={{ fontWeight: 600, width: 130, textAlign: "center" }}>
                   More Details
                 </TableCell>
               </TableRow>
@@ -584,60 +634,59 @@ const Dashboard = () => {
                   hover
                   sx={{
                     "&:hover": {
-                      backgroundColor: "#F9FAFB",
-                    },
+                      backgroundColor: "#F8FAFF",
+                    }
                   }}
                 >
-                  <TableCell sx={{ fontSize: 15 }}>{row.processing_date}</TableCell>
+                  <TableCell sx={{ fontSize: 12 }}>{row.processing_date}</TableCell>
                   <TableCell>
-                    <Typography sx={{ fontSize: 15 }}>
+                    <Typography  sx={{ fontSize: 12 }}>
                       {row.entity}
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography sx={{ fontSize: 15, fontWeight: 500 }}>
+                    <Typography sx={{ fontSize: 12,fontWeight: 500 }}>
                       {row.customer_name}
                     </Typography>
                   </TableCell>
-                  <TableCell sx={{ fontSize: 15 }}>
+                  <TableCell sx={{ fontSize: 12 }}>
                     {row.customer_po_no}
                   </TableCell>
-                  <TableCell sx={{ fontSize: 15 }}>
+                  <TableCell sx={{ fontSize: 12 }}>
                     {row.salesorder_no}
                   </TableCell>
                   <TableCell
                     sx={{
                       textAlign: "left",
                       verticalAlign: "middle",
+                      fontSize: 12 
                     }}
                   >
                     <Chip
-                      label={row.processing_status}
+                      label={row.status}
                       size="small"
                       sx={{
-                        minWidth: 120,
-                        fontSize: 14,
-                        fontWeight: 600,
-                        borderRadius: 2,
-                        backgroundColor:
-                          row.processing_status === "Approved"
-                            ? "#ECFDF5"
-                            : row.processing_status === "Pending Approval"
-                              ? "#EFF6FF"
-                              : "#FFFBEB",
-                        color:
-                          row.processing_status === "Approved"
-                            ? "#047857"
-                            : row.processing_status === "Pending Approval"
-                              ? "#1D4ED8"
-                              : "#B45309",
+                        height: 18,
+                        fontSize: 10,
+                        fontWeight: 700,
+                        borderRadius: 999,
+                        background:
+                          row.status === "Approved"
+                            ? "linear-gradient(135deg,#34D399,#059669)"
+                            : row.status === "Pending Approval"
+                              ? "linear-gradient(135deg,#60A5FA,#2563EB)"
+                              : "linear-gradient(135deg,#FBBF24,#D97706)",
+                        color: "#fff",
+                        boxShadow: "0 6px 14px rgba(0,0,0,0.15)",
                       }}
                     />
+
+
                   </TableCell>
                   <TableCell
                     sx={{
-                      fontSize: 15,
-                      fontWeight: 500,
+                      fontSize: 11,
+                      fontWeight: 600,
                       color: "#2F6FED",
                       cursor: "pointer",
                       "&:hover": { textDecoration: "underline" },
@@ -754,16 +803,18 @@ const Dashboard = () => {
                       }
                     >
                       <IconButton
+                        size="small"
                         sx={{
+                          width: 24,
+                          height: 24,
                           backgroundColor: "#EEF2FF",
-                          "&:hover": {
-                            backgroundColor: "#E0E7FF",
-                            transform: "scale(1.1)",
-                          },
+                          padding: 0,
+                          "&:hover": { backgroundColor: "#E0E7FF" },
                         }}
                       >
-                        <VisibilityIcon sx={{ color: "#4338CA" }} />
+                        <VisibilityIcon sx={{ fontSize: 14, color: "#4338CA" }} />
                       </IconButton>
+
                     </Tooltip>
 
                   </TableCell>
@@ -777,13 +828,13 @@ const Dashboard = () => {
         {/* ================= Footer ================= */}
         <Box
           px={3}
-          py={2}
+          py={1.5}
           display="flex"
           justifyContent="space-between"
           alignItems="center"
           borderTop="1px solid #E5E7EB"
         >
-          <Typography fontSize={13} color="text.secondary">
+          <Typography fontSize={12} color="text.secondary">
             {filteredRows.length} record(s)
           </Typography>
 
@@ -791,11 +842,14 @@ const Dashboard = () => {
             <Button
               variant="contained"
               sx={{
-                borderRadius: 2,
+                borderRadius: 999,
                 textTransform: "none",
                 fontWeight: 600,
-                px: 3,
-                background: "linear-gradient(135deg, #2F6FED, #2F6FED)",
+                height: 28,
+                px: 2,
+                fontSize: 11,
+                backgroundColor: "#005eb8",
+                "&:hover": { opacity: 0.9 },
               }}
               onClick={handlePostOrders}
               disabled={loading}
@@ -804,8 +858,9 @@ const Dashboard = () => {
             </Button>
           )}
         </Box>
+
       </Paper>
-    </Box>
+    </Box >
   );
 };
 
