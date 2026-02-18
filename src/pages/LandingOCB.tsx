@@ -67,7 +67,20 @@ const LandingOMI = () => {
   const [activeMenu, setActiveMenu] = useState(""); // no active child initially
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", background: "#F1F3F8" }}>
+    <Box
+      sx={{
+        display: "flex",
+        minHeight: "100vh",
+        background: "#F1F3F8",
+
+        // ✅ Add same scaling as OMI
+        transform: "scale(0.70)",
+        transformOrigin: "top left",
+
+        width: "calc(100% / 0.70)",
+        height: "calc(100vh / 0.70)",
+      }}
+    >
       {/* ================= LEFT SIDEBAR ================= */}
       <Box
         sx={{
@@ -187,7 +200,7 @@ const LandingOMI = () => {
               textTransform: "none",
             }}
           >
-            Launch 
+            Launch
           </Button>
         </Paper>
 

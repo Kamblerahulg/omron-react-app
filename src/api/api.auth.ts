@@ -1,23 +1,33 @@
-// import { callApi } from "./apiClient";
-// import { setToken } from "../utils/cookie.util";
-
-import { setToken } from "../utils/cookies";
-import { callApi } from "./api.util";
+// src/api/api.auth.ts
 
 export const generateToken = async () => {
-  const response = await callApi<{ access_token: string }>({
-    url: "auth/token",
-    method: "POST",
-    data: {
-      client_id: "myclientid",
-      client_secret: "mysecret",
-    },
-    requiresAuth: false, // 🔥 Pre-login
-  });
+    try {
+        const response = await fetch(
+            "https://7gh3rz55ge.execute-api.ap-southeast-1.amazonaws.com/stage/auth/token",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    client_id: "myclientid",
+                    client_secret: "mysecret",
+                }),
+            }
+        );
 
-  if (response?.access_token) {
-    setToken(response.access_token);
-  }
+        if (!response.ok) {
+            throw new Error("Failed to generate token");
+        }
 
-  return response;
+        const data = await response.json();
+
+        // Save token
+        localStorage.setItem("access_token", data.access_token);
+
+        return data;
+    } catch (error) {
+        console.error("Token generation error:", error);
+        throw error;
+    }
 };

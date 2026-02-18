@@ -4,29 +4,67 @@ import { MOCK_PROCESSING_LOGS } from "../mocks/processingLog.mock";
 import { MOCK_PROCESSING_LOG_DETAILS } from "../mocks/processingLogDetail.mock";
 import { callApi } from "../api/api.util";
 
-const BASE_URL = "/salesorders/processing-log";
+
+/* ============================= */
+/* 🔹 MAIN SERVICE OBJECT */
+/* ============================= */
 
 export const processingLogService = {
-  list: async () => {
+  /* 🔹 LIST FILE LOGS (SECURED) */
+  list: async (): Promise<ProcessingLog[]> => {
     try {
-      const res = await axios.get<ProcessingLog[]>(BASE_URL);
-      return res.data;
-    } catch {
+      const response = await callApi({
+        url: "file-log",
+        method: "GET",
+        requiresAuth: true,
+      });
+
+      // 🔥 MAP API RESPONSE TO UI MODEL
+      const mappedData: ProcessingLog[] = response.map((item: any) => ({
+        id: item.id,
+        log_id: item.id,
+
+        file_name: item.file_name,
+        entity: item.entity,
+
+        status: item.status,
+        processing_status: item.status,
+
+        customer_name: item.customer_name,
+        customer_po_no: item.customer_po_number,
+        salesorder_no: item.salesorder_number,
+
+        processing_date: item.created_date,
+
+        reviewed_by: item.reviewed_by ?? "",
+        reviewed_timestamp: item.reviewed_date ?? "",
+      }));
+
+      return mappedData;
+    } catch (error) {
+      console.warn("⚠️ file-log API failed, using mock", error);
       return MOCK_PROCESSING_LOGS;
     }
   },
 
+
+  /* 🔹 GET DETAILS */
   getDetailByLogId: async (logId: string) => {
     try {
-      const res = await axios.get(`${BASE_URL}/${logId}`);
-      return res.data;
+      const res = await callApi({
+        url: `file-log/${logId}`,
+        method: "GET",
+        requiresAuth: true,
+      });
+
+      return res;
     } catch (error) {
       console.warn(`⚠️ detail API failed for ${logId}`, error);
       return MOCK_PROCESSING_LOG_DETAILS[logId];
     }
   },
 
-  /** 🔥 POST TO JDE (Create Processing Log) */
+  /* 🔥 POST TO JDE */
   createProcessingLog: async (payload: {
     salesorder_id: string;
     customer_name: string;
@@ -35,10 +73,17 @@ export const processingLogService = {
     reviewed_by: string;
     reviewed_timestamp: string;
   }) => {
-    const res = await axios.post(BASE_URL, payload);
-    return res.data;
+    const res = await callApi({
+      url: "file-log",
+      method: "POST",
+      data: payload,
+      requiresAuth: true,
+    });
+
+    return res;
   },
-  /** 🔁 UPDATE PROCESSING STATUS (Approve / Reject) */
+
+  /* 🔁 UPDATE PROCESSING STATUS */
   updateProcessingStatus: async (
     logId: string,
     payload: {
@@ -48,11 +93,14 @@ export const processingLogService = {
     }
   ) => {
     try {
-      const res = await axios.put(
-        `/salesorders/processing-log/${logId}`,
-        payload
-      );
-      return res.data;
+      const res = await callApi({
+        url: `salesorders/processing-log/${logId}`,
+        method: "PUT",
+        data: payload,
+        requiresAuth: true,
+      });
+
+      return res;
     } catch (error) {
       console.warn("⚠️ updateProcessingStatus API failed", error);
       return {
@@ -61,14 +109,4 @@ export const processingLogService = {
       };
     }
   },
-
-};
-
-
-export const getFileLogs = async () => {
-  return callApi({
-    url: "file-log",
-    method: "GET",
-    requiresAuth: true, // 🔥 This attaches Bearer + Private Key
-  });
 };

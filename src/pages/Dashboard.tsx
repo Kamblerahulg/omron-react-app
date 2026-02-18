@@ -24,7 +24,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useEffect } from "react";
-import { getFileLogs, processingLogService }
+import { processingLogService }
   from "../services/processingLog.service";
 
 import { ProcessingLog }
@@ -76,25 +76,25 @@ const Dashboard = () => {
   const [fileLogs, setFileLogs] = useState<any[]>([]);
   // const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const fetchFileLogs = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // // const fetchFileLogs = async () => {
+  // //   try {
+  // //     setLoading(true);
+  // //     setError(null);
 
-      const response = await getFileLogs();
-      setFileLogs(response?.data || response); // adjust if API wraps response
+  // //     const response = await getFileLogs();
+  // //     setFileLogs(response?.data || response); // adjust if API wraps response
 
-    } catch (err: any) {
-      setError(err?.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // //   } catch (err: any) {
+  // //     setError(err?.message || "Something went wrong");
+  // //   } finally {
+  // //     setLoading(false);
+  // //   }
+  // // };
 
-  useEffect(() => {
-    fetchFileLogs();
-  }, []);
-  console.log(fileLogs)
+  // useEffect(() => {
+  //   fetchFileLogs();
+  // }, []);
+  // console.log(fileLogs)
 
   const handleOpenAudit = (row: any) => {
     setSelectedAudit(row);
@@ -168,7 +168,8 @@ const Dashboard = () => {
 
     setLoadingDetail(logId);
     try {
-      const data = await processingLogService.getDetailByLogId(logId);
+      const data = await processingLogService.list();
+      setRows(data);
 
       setDetailCache((prev) => ({
         ...prev,
@@ -224,44 +225,6 @@ const Dashboard = () => {
       value: row.processing_date,
     },
   ];
-
-
-  // 🔹 Example data (replace with API/DynamoDB)
-  // const rows = [
-  //   {
-  //     id: 1,
-  //     processingDate: "20-01-2026",
-  //     entity: "India",
-  //     customerName: "Tata Motors",
-  //     customerPONo: "CPO-34001",
-  //     salesOrderNo: "SO-1001",
-  //     fileName: "ACTON_1",
-  //     status: "Approved",
-  //     reviewer: "Anil R",
-  //   },
-  //   {
-  //     id: 2,
-  //     processingDate: "26-01-2026",
-  //     entity: "Singapore",
-  //     customerName: "Infosys",
-  //     customerPONo: "CPO-97001",
-  //     salesOrderNo: "SO-1002",
-  //     fileName: "ACTON_1",
-  //     status: "Pending Approval",
-  //     reviewer: "Gabriel C",
-  //   },
-  //   {
-  //     id: 3,
-  //     processingDate: "18-01-2026",
-  //     entity: "Singapore",
-  //     customerName: "Cloud-Kinetics",
-  //     customerPONo: "CPO-30077301",
-  //     salesOrderNo: "GOR-342",
-  //     fileName: "ACTON_1",
-  //     status: "JDE-Error",
-  //     reviewer: "Alex D",
-  //   },
-  // ];
 
   // 🔹 Customer dropdown (DynamoDB – logged-in user scope)
   const customerList = ["Tata Motors", "Infosys", "Reliance"]; // map from API
@@ -359,6 +322,54 @@ const Dashboard = () => {
   const NORMAL_WIDTH = 150;
   const SMALL_WIDTH = 120;
 
+  const handleExportCSV = () => {
+    if (filteredRows.length === 0) return;
+
+    // Define table headers (matching your visible table columns)
+    const headers = [
+      "Processed Date",
+      "Entity",
+      "Customer Name",
+      "Customer PO #",
+      "Sales Order #",
+      "Status",
+      "Review Data",
+      "File Name",
+    ];
+
+    // Map rows to CSV format
+    const csvRows = filteredRows.map((row) => [
+      row.processing_date,
+      row.entity,
+      row.customer_name,
+      row.customer_po_no,
+      row.salesorder_no,
+      row.status,
+      row.file_name,           // you can change to a review data field if needed
+      row.file_name,           // or include both file_name & review info
+    ]);
+
+    // Convert to CSV string
+    const csvContent = [headers, ...csvRows]
+      .map((e) => e.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+
+    // Create blob
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+    // Create download link
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute(
+      "download",
+      `DocuBot_Export_${new Date().toISOString().slice(0, 10)}.csv`
+    );
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <Box>
@@ -600,28 +611,28 @@ const Dashboard = () => {
                 <TableCell sx={{ fontWeight: 600, width: 220 }}>
                   Entity
                 </TableCell>
-                <TableCell sx={{ fontWeight: 600, width: 220 }}>
+                <TableCell sx={{ fontWeight: 600, width: 380 }}>
                   Customer Name
                 </TableCell>
-                <TableCell sx={{ fontWeight: 600, width: 200 }}>
+                <TableCell sx={{ fontWeight: 600, width: 160 }}>
                   Customer PO #
                 </TableCell>
-                <TableCell sx={{ fontWeight: 600, width: 180 }}>
+                <TableCell sx={{ fontWeight: 600, width: 110 }}>
                   Sales Order #
                 </TableCell>
                 <TableCell
                   sx={{
                     fontWeight: 600,
-                    width: 120,
+                    width: 90,
                     textAlign: "left",
                   }}
                 >
                   Status
                 </TableCell>
-                <TableCell sx={{ fontWeight: 600, width: 260 }}>
+                <TableCell sx={{ fontWeight: 600, width: 180 }}>
                   Review Data
                 </TableCell>
-                <TableCell sx={{ fontWeight: 600, width: 130, textAlign: "center" }}>
+                <TableCell sx={{ fontWeight: 600, width: 90, textAlign: "center" }}>
                   More Details
                 </TableCell>
               </TableRow>
@@ -640,15 +651,23 @@ const Dashboard = () => {
                 >
                   <TableCell sx={{ fontSize: 12 }}>{row.processing_date}</TableCell>
                   <TableCell>
-                    <Typography  sx={{ fontSize: 12 }}>
+                    <Typography sx={{ fontSize: 12 }}>
                       {row.entity}
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography sx={{ fontSize: 12,fontWeight: 500 }}>
+                    <Typography
+                      sx={{
+                        fontSize: 12,
+                        fontWeight: 500,
+                        whiteSpace: "normal",     // 🔥 allow wrapping
+                        wordBreak: "break-word",
+                      }}
+                    >
                       {row.customer_name}
                     </Typography>
                   </TableCell>
+
                   <TableCell sx={{ fontSize: 12 }}>
                     {row.customer_po_no}
                   </TableCell>
@@ -659,7 +678,7 @@ const Dashboard = () => {
                     sx={{
                       textAlign: "left",
                       verticalAlign: "middle",
-                      fontSize: 12 
+                      fontSize: 12
                     }}
                   >
                     <Chip
@@ -834,13 +853,36 @@ const Dashboard = () => {
           alignItems="center"
           borderTop="1px solid #E5E7EB"
         >
+          {/* Record count */}
           <Typography fontSize={12} color="text.secondary">
             {filteredRows.length} record(s)
           </Typography>
 
-          {status === "Approved" && (
+          <Box display="flex" gap={1} alignItems="center">
+            {/* Post to JDE */}
+            {status === "Approved" && (
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: 999,
+                  textTransform: "none",
+                  fontWeight: 600,
+                  height: 28,
+                  px: 2,
+                  fontSize: 11,
+                  backgroundColor: "#005eb8",
+                  "&:hover": { opacity: 0.9 },
+                }}
+                onClick={handlePostOrders}
+                disabled={loading}
+              >
+                Post to JDE
+              </Button>
+            )}
+
+            {/* Export CSV button */}
             <Button
-              variant="contained"
+              variant="outlined"
               sx={{
                 borderRadius: 999,
                 textTransform: "none",
@@ -848,15 +890,12 @@ const Dashboard = () => {
                 height: 28,
                 px: 2,
                 fontSize: 11,
-                backgroundColor: "#005eb8",
-                "&:hover": { opacity: 0.9 },
               }}
-              onClick={handlePostOrders}
-              disabled={loading}
+              onClick={handleExportCSV}
             >
-              Post to JDE
+              Export CSV
             </Button>
-          )}
+          </Box>
         </Box>
 
       </Paper>
