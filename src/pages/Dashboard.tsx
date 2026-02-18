@@ -164,17 +164,18 @@ const Dashboard = () => {
   };
 
   const fetchMoreDetails = async (logId: string) => {
-    if (detailCache[logId]) return; // cache hit
+    if (detailCache[logId]) return;
 
     setLoadingDetail(logId);
     try {
-      const data = await processingLogService.list();
-      setRows(data);
+      const data = await processingLogService.getDetailByLogId(logId); // ✅ single record
 
       setDetailCache((prev) => ({
         ...prev,
         [logId]: data,
       }));
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoadingDetail(null);
     }
@@ -731,19 +732,29 @@ const Dashboard = () => {
                       arrow
                       onOpen={() => fetchMoreDetails(row.log_id)}
                       componentsProps={{
-                        tooltip: {
-                          sx: {
-                            backgroundColor: "#FFFFFF",
-                            color: "#0F172A",
-                            borderRadius: 2,
-                            p: 2.5,
-                            boxShadow: "0 20px 40px rgba(15,23,42,0.18)",
-                            maxWidth: 480,
-                            minWidth: 360,
+                          tooltip: {
+                            sx: {
+                              backgroundColor: "#FFFFFF",
+                              color: "#0F172A",
+                              borderRadius: 3,
+                              px: 2,
+                              py: 1.5,
+                              boxShadow: "0 10px 30px rgba(15,23,42,0.12)",
+
+                              width: 320,          // ✅ fixed width
+                              maxWidth: 320,       // ✅ prevents stretching
+                              fontFamily: `"Shorai Sans", sans-serif`,
+
+                              "& .MuiTypography-root": {
+                                fontSize: 12,      // ✅ consistent font size
+                                lineHeight: 1.5,
+                              },
+                            },
                           },
-                        },
-                        arrow: { sx: { color: "#FFFFFF" } },
-                      }}
+                          arrow: {
+                            sx: { color: "#FFFFFF" },
+                          },
+                        }}
                       title={
                         loadingDetail === row.log_id ? (
                           <Typography fontSize={12}>Loading...</Typography>
@@ -813,6 +824,12 @@ const Dashboard = () => {
                               </Typography>
                               <Typography fontSize={12}>
                                 {detailCache[row.log_id].remark}
+                              </Typography>
+                              <Typography fontSize={12} color="text.secondary">
+                                Is Duplicate
+                              </Typography>
+                              <Typography fontSize={12}>
+                                {detailCache[row.log_id].isduplicate}
                               </Typography>
                             </Box>
                           </Box>

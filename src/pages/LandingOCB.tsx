@@ -144,11 +144,11 @@ const LandingOMI = () => {
 
             <SidebarItem
               icon={<SecurityIcon />}
-              label="Roles"
-              active={activeMenu === "Roles"}
+              label="User Mapping"
+              active={activeMenu === "User Mapping"}
               onClick={() => {
-                setActiveMenu("Roles");
-                navigate("/accountsettings/role");
+                setActiveMenu("User Mapping");
+                navigate("/accountsettings/UserMapping");
               }}
               isChild
             />

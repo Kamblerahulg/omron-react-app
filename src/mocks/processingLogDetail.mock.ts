@@ -55,7 +55,8 @@ export const MOCK_PROCESSING_LOG_DETAILS: Record<string, any> = {
     reviewedBy: "System",
     previousStatus: "Approved",
     pcsinfo: "Primary CS",
-    scsinfo: "Secondary CSS",
+    scsinfo: "Secondary CSS-SR",
+    isduplicate: "N",
     remark: "Auto approved after reconciliation",
   },
 
@@ -64,7 +65,8 @@ export const MOCK_PROCESSING_LOG_DETAILS: Record<string, any> = {
     reviewedBy: "Gabriel C",
     previousStatus: "Pending Approval",
     pcsinfo: "Primary CS SGG",
-    scsinfo: "Secondary CS SGS",
+    scsinfo: "Secondary CS SGS-JU",
+    isduplicate: "Y",
     remark: "Pending customer confirmation",
   },
 };

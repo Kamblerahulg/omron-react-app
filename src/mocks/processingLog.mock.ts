@@ -54,6 +54,7 @@ export const MOCK_PROCESSING_LOG_DETAILS: Record<string, any> = {
     previousStatus: "Approved",
     pcsinfo: "Primary CS",
     scsinfo: "Secondary CS",
+    isduplicate: "Y",
     remark: "Auto approved after reconciliation",
   },
 
@@ -63,6 +64,7 @@ export const MOCK_PROCESSING_LOG_DETAILS: Record<string, any> = {
     previousStatus: "Pending Approval",
     pcsinfo: "Primary CS SG",
     scsinfo: "Secondary CS SGG",
+    isduplicate: "Y",
     remark: "Pending customer confirmation",
   },
 };
