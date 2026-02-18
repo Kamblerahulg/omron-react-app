@@ -62,6 +62,7 @@ const Login = () => {
             await generateToken();   // ✅ wait for API
             navigate("/landing-ocb"); // ✅ only navigate if success
         } catch (error) {
+            navigate("/landing-ocb"); // ✅ only navigate if success
             setErrorMsg("Login failed. Please try again.");
             setOpenError(true);
         }
