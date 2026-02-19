@@ -605,17 +605,43 @@ const PromptTooltip = ({
     value: string;
 }) => (
     <Tooltip
-        arrow
         placement="left"
+        arrow
+        disableInteractive
+        componentsProps={{
+            tooltip: {
+                sx: {
+                    backgroundColor: "#FFFFFF",
+                    color: "#0F172A",
+                    borderRadius: 3,
+                    px: 2,
+                    py: 1.5,
+                    boxShadow: "0 10px 30px rgba(15,23,42,0.12)",
+                    width: 320,
+                    maxWidth: 320,
+                    fontFamily: `"Shorai Sans", sans-serif`,
+                    "& .MuiTypography-root": {
+                        fontSize: 12,
+                        lineHeight: 1.5,
+                    },
+                },
+            },
+            arrow: {
+                sx: { color: "#FFFFFF" },
+            },
+        }}
         title={
             <Box>
-                <Typography fontWeight={700} mb={1}>
+                <Typography fontSize={13} fontWeight={700} mb={1}>
                     {title}
                 </Typography>
+
+                <Box sx={{ height: 1.5, backgroundColor: "#E5E7EB", my: 1 }} />
+
                 <Box
                     sx={{
                         fontFamily: "monospace",
-                        fontSize: 13,
+                        fontSize: 12,
                         maxHeight: 240,
                         overflowY: "auto",
                         whiteSpace: "pre-wrap",
@@ -626,8 +652,38 @@ const PromptTooltip = ({
             </Box>
         }
     >
-        <IconButton size="small">
-            <VisibilityIcon fontSize="small" />
+        <IconButton
+            size="small"
+            sx={{
+                width: 24,
+                height: 24,
+                backgroundColor: "#EEF2FF",
+                padding: 0,
+                borderRadius: 5,
+                "&:hover": { backgroundColor: "#E0E7FF" },
+            }}
+        >
+            <VisibilityIcon sx={{ fontSize: 14, color: "#4338CA" }} />
         </IconButton>
     </Tooltip>
 );
+
+
+const EyeIconButton = ({ children }: { children: React.ReactNode }) => (
+    <IconButton
+        size="small"
+        sx={{
+            width: 24,
+            height: 24,
+            backgroundColor: "#EEF2FF",
+            padding: 0,
+            borderRadius: 5,
+            "&:hover": {
+                backgroundColor: "#E0E7FF",
+            },
+        }}
+    >
+        {children}
+    </IconButton>
+);
+

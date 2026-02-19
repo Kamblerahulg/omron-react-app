@@ -100,45 +100,6 @@ const Dashboard = () => {
     setSelectedAudit(row);
     setAuditOpen(true);
   };
-  // const compactFilter = {
-  //   backgroundColor: "#FFFFFF",
-  //   borderRadius: 2,
-  //   minWidth: 120,
-
-  //   "& .MuiOutlinedInput-root": {
-  //     transition: "all 0.3s ease",
-  //     backgroundColor: "#FFFFFF",
-
-  //     "& fieldset": {
-  //       borderColor: "#E5E7EB",
-  //     },
-
-  //     "&:hover fieldset": {
-  //       borderColor: "#CBD5E1",
-  //     },
-
-  //     "&.Mui-focused": {
-  //       transform: "translateY(-1px) scale(1.01)",
-  //       boxShadow: "0 6px 20px rgba(47,111,237,0.15)",
-
-  //       "& fieldset": {
-  //         borderColor: "#2F6FED",
-  //         borderWidth: 1.5,
-  //       },
-  //     },
-  //   },
-
-  //   "& .MuiInputLabel-root": {
-  //     fontSize: 13,
-  //     color: "#6B7280",
-  //   },
-
-  //   "& .MuiInputBase-input": {
-  //     fontSize: 14,
-  //     padding: "10px 12px",
-  //   },
-  // };
-
 
   const compactFilter = {
     width: 110,
