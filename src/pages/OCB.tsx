@@ -20,7 +20,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import DataObjectIcon from "@mui/icons-material/DataObject";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PdfViewer from "../components/PdfViewer";
 import JsonEditor from "../components/JsonEditor";
 import { getPdfUrl, getJsonData, rejectFile } from "../api/omiApi";
@@ -49,7 +49,7 @@ export default function OCB() {
   const [loading, setLoading] = useState(false);
   const [detailsAnchor, setDetailsAnchor] = useState<null | HTMLElement>(null);
   const [selectedRow, setSelectedRow] = useState<any>(null);
-
+  
   const handleOpenDetails = (
     event: React.MouseEvent<HTMLElement>,
     row: any
@@ -167,7 +167,8 @@ pricing setup, and retry after correction.
 
     const fetchJson = async () => {
       try {
-        const data = await getJsonData(selectedFile);
+        // const data = await getJsonData(selectedFile);
+        const data = await processingLogService.getDetailByLogId(logId)
         setJsonData(data);
       } catch (err) {
         console.error("Failed to load JSON", err);

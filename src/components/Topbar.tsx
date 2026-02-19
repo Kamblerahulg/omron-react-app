@@ -1,6 +1,7 @@
 import "./Topbar.css";
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
+import { Logout } from "@mui/icons-material";
 
 const Topbar = () => {
   const navigate = useNavigate();
@@ -30,16 +31,17 @@ const Topbar = () => {
       <div className="brand"></div>
 
       <div className="user" ref={ref}>
-        <button className="user-btn" onClick={() => setOpen(!open)}>
+        <div className="user-btn">
           <span className="avatar">{userName[0]}</span>
           <span className="name">{userName}</span>
-        </button>
+          <span className="log-out" onClick={() => logout()}><Logout /></span>
+        </div>
 
-        {open && (
+        {/* {open && (
           <div className="menu">
             <button onClick={logout}>Log out</button>
           </div>
-        )}
+        )} */}
       </div>
     </header>
   );

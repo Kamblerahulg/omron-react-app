@@ -79,3 +79,6 @@
 .menu button:hover {
   background: #f9fafb;
 }
+.log-out {
+  cursor: pointer;
+}

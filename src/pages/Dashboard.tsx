@@ -32,6 +32,7 @@ import { ProcessingLog }
 import { MOCK_PROCESSING_LOGS } from "../mocks/processingLog.mock";
 
 const STATUS_OPTIONS = [
+  "NEW",
   "Pending Approval",
   "Approved",
   "JDE-Success",
@@ -76,30 +77,12 @@ const Dashboard = () => {
   const [fileLogs, setFileLogs] = useState<any[]>([]);
   // const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // // const fetchFileLogs = async () => {
-  // //   try {
-  // //     setLoading(true);
-  // //     setError(null);
-
-  // //     const response = await getFileLogs();
-  // //     setFileLogs(response?.data || response); // adjust if API wraps response
-
-  // //   } catch (err: any) {
-  // //     setError(err?.message || "Something went wrong");
-  // //   } finally {
-  // //     setLoading(false);
-  // //   }
-  // // };
-
-  // useEffect(() => {
-  //   fetchFileLogs();
-  // }, []);
-  // console.log(fileLogs)
 
   const handleOpenAudit = (row: any) => {
     setSelectedAudit(row);
     setAuditOpen(true);
   };
+
 
   const compactFilter = {
     width: 110,
@@ -125,33 +108,40 @@ const Dashboard = () => {
   };
 
   const fetchMoreDetails = async (logId: string) => {
-    if (detailCache[logId]) return;
+  if (detailCache[logId]) return;
 
-    setLoadingDetail(logId);
-    try {
-      const data = await processingLogService.getDetailByLogId(logId); // ✅ single record
+  setLoadingDetail(logId);
 
-      setDetailCache((prev) => ({
-        ...prev,
-        [logId]: data,
-      }));
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoadingDetail(null);
-    }
-  };
+  try {
+    const data = filteredRows.find(
+      (item: any) => item.log_id == logId
+    ); // ✅ use find instead of filter
+
+    setDetailCache((prev) => ({
+      ...prev,
+      [logId]: data,
+    }));
+
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoadingDetail(null);
+  }
+};
 
   useEffect(() => {
     const loadLogs = async () => {
       setLoading(true);
       try {
+        // Fetch from the API
+        console.log("Dashboard- A")
         const data = await processingLogService.list();
         setRows(data);
+        console.log(data)
         setUsingMock(false);
       } catch (error) {
         console.error("API failed, using dummy data", error);
-        setRows(MOCK_PROCESSING_LOGS);
+        // setRows(MOCK_PROCESSING_LOGS);
         setUsingMock(true);
       } finally {
         setLoading(false);
@@ -160,33 +150,6 @@ const Dashboard = () => {
 
     loadLogs();
   }, []);
-
-  const getAuditHistoryFromRow = (row: ProcessingLog) => [
-    {
-      label: "Status",
-      value: row.status,
-    },
-    {
-      label: "Processing Status",
-      value: row.processing_status,
-    },
-    {
-      label: "Reviewed By",
-      value: row.reviewed_by,
-    },
-    {
-      label: "Reviewed At",
-      value: new Date(row.reviewed_timestamp).toLocaleString(),
-    },
-    {
-      label: "Entity",
-      value: row.entity,
-    },
-    {
-      label: "Processing Date",
-      value: row.processing_date,
-    },
-  ];
 
   // 🔹 Customer dropdown (DynamoDB – logged-in user scope)
   const customerList = ["Tata Motors", "Infosys", "Reliance"]; // map from API
@@ -200,7 +163,7 @@ const Dashboard = () => {
   const secondaryCustomers = ["Accenture", "Capgemini"];
 
   const filteredRows = useMemo(() => {
-    return rows.filter((r) => {
+    return rows?.filter((r) => {
       const matchesCustomer =
         !customer || r.customer_name === customer;
 
@@ -246,19 +209,20 @@ const Dashboard = () => {
     salesOrderNo,
     customerType,
   ]);
+  console.log(filteredRows)
 
   const handlePostOrders = async () => {
     try {
       setLoading(true);
 
-      const approvedRows = filteredRows.filter(
+      const approvedRows = filteredRows?.filter(
         (r) => r.processing_status === "Approved"
       );
 
-      if (!approvedRows.length) return;
+      if (!approvedRows?.length) return;
 
       await Promise.all(
-        approvedRows.map((row) =>
+        approvedRows?.map((row) =>
           processingLogService.createProcessingLog({
             salesorder_id: row.salesorder_no,
             customer_name: row.customer_name,
@@ -285,7 +249,7 @@ const Dashboard = () => {
   const SMALL_WIDTH = 120;
 
   const handleExportCSV = () => {
-    if (filteredRows.length === 0) return;
+    if (filteredRows?.length === 0) return;
 
     // Define table headers (matching your visible table columns)
     const headers = [
@@ -300,7 +264,7 @@ const Dashboard = () => {
     ];
 
     // Map rows to CSV format
-    const csvRows = filteredRows.map((row) => [
+    const csvRows = filteredRows?.map((row) => [
       row.processing_date,
       row.entity,
       row.customer_name,
@@ -601,7 +565,7 @@ const Dashboard = () => {
             </TableHead>
 
             <TableBody>
-              {filteredRows.map((row) => (
+              {filteredRows?.map((row) => (
                 <TableRow
                   key={row.id}
                   hover
@@ -693,29 +657,29 @@ const Dashboard = () => {
                       arrow
                       onOpen={() => fetchMoreDetails(row.log_id)}
                       componentsProps={{
-                          tooltip: {
-                            sx: {
-                              backgroundColor: "#FFFFFF",
-                              color: "#0F172A",
-                              borderRadius: 3,
-                              px: 2,
-                              py: 1.5,
-                              boxShadow: "0 10px 30px rgba(15,23,42,0.12)",
+                        tooltip: {
+                          sx: {
+                            backgroundColor: "#FFFFFF",
+                            color: "#0F172A",
+                            borderRadius: 3,
+                            px: 2,
+                            py: 1.5,
+                            boxShadow: "0 10px 30px rgba(15,23,42,0.12)",
 
-                              width: 320,          // ✅ fixed width
-                              maxWidth: 320,       // ✅ prevents stretching
-                              fontFamily: `"Shorai Sans", sans-serif`,
+                            width: 320,          // ✅ fixed width
+                            maxWidth: 320,       // ✅ prevents stretching
+                            fontFamily: `"Shorai Sans", sans-serif`,
 
-                              "& .MuiTypography-root": {
-                                fontSize: 12,      // ✅ consistent font size
-                                lineHeight: 1.5,
-                              },
+                            "& .MuiTypography-root": {
+                              fontSize: 12,      // ✅ consistent font size
+                              lineHeight: 1.5,
                             },
                           },
-                          arrow: {
-                            sx: { color: "#FFFFFF" },
-                          },
-                        }}
+                        },
+                        arrow: {
+                          sx: { color: "#FFFFFF" },
+                        },
+                      }}
                       title={
                         loadingDetail === row.log_id ? (
                           <Typography fontSize={12}>Loading...</Typography>
@@ -739,7 +703,7 @@ const Dashboard = () => {
                                 Last Reviewed Date
                               </Typography>
                               <Typography fontSize={12} fontWeight={600}>
-                                {detailCache[row.log_id].lastReviewedDate}
+                                {detailCache[row.log_id].processing_date}
                               </Typography>
 
                               <Typography fontSize={12} color="text.secondary">
@@ -833,7 +797,7 @@ const Dashboard = () => {
         >
           {/* Record count */}
           <Typography fontSize={12} color="text.secondary">
-            {filteredRows.length} record(s)
+            {filteredRows?.length} record(s)
           </Typography>
 
           <Box display="flex" gap={1} alignItems="center">

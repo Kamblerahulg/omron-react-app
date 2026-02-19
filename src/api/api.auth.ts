@@ -1,5 +1,7 @@
 // src/api/api.auth.ts
 
+import { setToken } from "../utils/cookies";
+
 export const generateToken = async () => {
     try {
         const response = await fetch(
@@ -23,8 +25,8 @@ export const generateToken = async () => {
         const data = await response.json();
 
         // Save token
-        localStorage.setItem("access_token", data.access_token);
-
+        // localStorage.setItem("access_token", data.access_token);
+        setToken(data.access_token)
         return data;
     } catch (error) {
         console.error("Token generation error:", error);

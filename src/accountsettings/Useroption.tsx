@@ -121,7 +121,7 @@ export default function UserOption() {
         justifyContent="space-between"
         alignItems="center"
         mb={2}
-        mt={0}
+        mt={1}
       >
         <Typography
           fontFamily={`"Shorai Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif`}

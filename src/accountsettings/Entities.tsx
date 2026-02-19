@@ -80,6 +80,8 @@ export default function Entities() {
         justifyContent="space-between"
         alignItems="center"
         mb={2}
+        mt={1}
+
       >
         <Typography
           fontSize={18}

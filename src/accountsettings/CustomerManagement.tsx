@@ -77,6 +77,8 @@ export default function CustomerManagement() {
                 justifyContent="space-between"
                 alignItems="center"
                 mb={2}
+                mt={1}
+
             >
                 <Typography
                     fontSize={18}
@@ -119,12 +121,15 @@ export default function CustomerManagement() {
                                 fontSize: 11,
                                 paddingTop: 0.8,
                                 paddingBottom: 0.8,
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
+                                whiteSpace: "normal",   // allow wrap
+                                overflow: "visible",    // show all text
+                                textOverflow: "unset",  // remove ellipsis
+                                verticalAlign: "middle",// vertically center content
                             },
                         }}
                     >
+
+
                         <colgroup>
                             <col style={{ width: "8%" }} />   {/* Entity */}
                             <col style={{ width: "10%" }} />  {/* Customer - close to Entity */}
@@ -156,11 +161,11 @@ export default function CustomerManagement() {
                                 <TableCell>Entity</TableCell>
                                 <TableCell>Customer</TableCell>
                                 <TableCell>File</TableCell>
-                                <TableCell align="center">Pre Processing</TableCell>
-                                <TableCell align="center">PII Masking</TableCell>
-                                <TableCell align="center">Master Prompt</TableCell>
-                                <TableCell align="center">Customer Prompt</TableCell>
-                                <TableCell align="center">Status</TableCell>
+                                <TableCell align="left">Pre Processing</TableCell>
+                                <TableCell align="left">PII Masking</TableCell>
+                                <TableCell align="left">Master Prompt</TableCell>
+                                <TableCell align="left">Customer Prompt</TableCell>
+                                <TableCell align="left">Status</TableCell>
                                 <TableCell>Primary</TableCell>
                                 <TableCell>Secondary</TableCell>
                                 <TableCell align="center">Actions</TableCell>
@@ -186,7 +191,7 @@ export default function CustomerManagement() {
                                     </TableCell>
                                     <TableCell>{c.name}</TableCell>
                                     <TableCell>{c.fileType}</TableCell>
-                                    <TableCell align="center">
+                                    <TableCell align="left">
                                         <Chip
                                             label={c.preProcessing === "Y" ? "Yes" : "No"}
                                             size="small"
@@ -194,18 +199,18 @@ export default function CustomerManagement() {
                                         />
                                     </TableCell>
 
-                                    <TableCell align="center">
+                                    <TableCell align="left">
                                         <Chip
                                             label={c.piiMasking === "Y" ? "Yes" : "No"}
                                             size="small"
                                             sx={booleanChipStyle(c.piiMasking)}
                                         />
                                     </TableCell>
-                                    <TableCell align="center">
+                                    <TableCell align="left">
                                         <PromptTooltip title="Master Prompt" value={c.masterPrompt} />
                                     </TableCell>
 
-                                    <TableCell align="center">
+                                    <TableCell align="left">
                                         <PromptTooltip
                                             title="Customer Prompt"
                                             value={c.customerPrompt}
@@ -224,7 +229,7 @@ export default function CustomerManagement() {
                                     <TableCell>{c.secondaryGroup || "-"}</TableCell>
 
                                     {/* Actions */}
-                                    <TableCell align="center" sx={{ width: 180 }}>
+                                    <TableCell align="left" sx={{ width: 180 }}>
                                         <Box
                                             display="flex"
                                             justifyContent="center"
@@ -575,6 +580,19 @@ const actionBtn = (
     color,
     backgroundColor: bg,
     "&:hover": { backgroundColor: hoverBg },
+});
+const statusActionBtn = (status: string) => ({
+    textTransform: "none",
+    fontSize: 11,
+    height: 26,
+    minWidth: 75,
+    borderRadius: 999,
+    fontWeight: 600,
+    color: status === "Active" ? "#B91C1C" : "#047857",  // red for Active (Deactivate) / green for Inactive (Activate)
+    backgroundColor: status === "Active" ? "#FEE2E2" : "#ECFDF5",
+    "&:hover": {
+        backgroundColor: status === "Active" ? "#FECACA" : "#D1FAE5",
+    },
 });
 
 const statusChipStyle = (status: string) => ({
